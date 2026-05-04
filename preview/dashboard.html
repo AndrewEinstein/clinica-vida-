@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard — Clinica Vida+</title>
+  <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <div class="logo">CV+</div>
+        <div class="title">Clinica Vida+</div>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="patients.html">Pacientes</a>
+        <a href="appointments.html">Consultas</a>
+        <a href="settings.html">Configurações</a>
+        <a href="login.html">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container hero">
+    <h1>Dashboard</h1>
+    <p class="muted">Visão geral da clínica (preview estático).</p>
+
+    <div class="cards" id="metrics">
+      <div class="card">
+        <h3 id="m-patients">—</h3>
+        <p>Pacientes</p>
+      </div>
+      <div class="card">
+        <h3 id="m-appointments">—</h3>
+        <p>Consultas hoje</p>
+      </div>
+      <div class="card">
+        <h3 id="m-available">—</h3>
+        <p>Profissionais disponíveis</p>
+      </div>
+    </div>
+
+    <h2 style="margin-top:24px">Próximas consultas</h2>
+    <table class="table" id="upcoming">
+      <thead><tr><th>Horário</th><th>Paciente</th><th>Profissional</th><th>Tipo</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+  </main>
+
+  <footer class="site-footer container">
+    <small>© Clinica Vida+ — Preview local</small>
+  </footer>
+  <script src="./assets/app.js"></script>
+</body>
+</html>

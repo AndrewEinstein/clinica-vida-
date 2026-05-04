@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Prontuário — Clinica Vida+</title>
+  <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <div class="logo">CV+</div>
+        <div class="title">Clinica Vida+</div>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="patients.html">Pacientes</a>
+        <a href="appointments.html">Consultas</a>
+        <a href="settings.html">Configurações</a>
+        <a href="login.html">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container hero">
+    <h1>Prontuário do paciente</h1>
+    <p class="muted">Informações básicas e histórico (demo).</p>
+
+    <div class="card" style="margin-top:12px">
+      <h3 id="patient-name">Nome do paciente</h3>
+      <p id="patient-info" class="muted">CPF • Nascimento • Telefone</p>
+      <hr>
+      <h4>Últimas consultas</h4>
+      <ul id="patient-history"></ul>
+    </div>
+
+  </main>
+
+  <footer class="site-footer container">
+    <small>© Clinica Vida+ — Preview local</small>
+  </footer>
+  <script src="./assets/app.js"></script>
+</body>
+</html>

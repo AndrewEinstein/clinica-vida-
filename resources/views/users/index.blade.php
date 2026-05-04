@@ -1,0 +1,1 @@
+@extends('shared.resource.index')
