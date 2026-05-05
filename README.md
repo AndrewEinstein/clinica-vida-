@@ -14,11 +14,21 @@ Sistema SaaS multi-clinica para gestao de clinica medica, construido com Laravel
 - Financeiro, convenios, relatorios e configuracoes
 - Policies, Form Requests, relacionamentos Eloquent, seeders e isolamento por `clinic_id`
 
+## Deploy no Vercel
+
+O Vercel deve ser usado para a previa estatica da pasta `preview`.
+
+- Framework Preset: `Vite`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+O sistema Laravel completo precisa de ambiente PHP com Composer e banco PostgreSQL/MySQL, como VPS, Render, Railway, Fly.io ou similar.
+
 ## Requisitos
 
 - PHP 8.2+
 - Composer
-- MySQL 8+
+- MySQL 8+ ou PostgreSQL/Supabase
 
 ## Instalacao
 

@@ -1,6 +1,7 @@
 /.phpunit.cache
 /node_modules
 /bootstrap/cache/*.php
+/dist
 /public/build
 /database/*.sqlite
 /storage/*.key
