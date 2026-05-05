@@ -5,6 +5,7 @@ services:
     plan: free
     autoDeploy: true
     healthCheckPath: /login
+    port: 80
     dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_NAME
@@ -42,4 +43,3 @@ services:
 
       - key: RUN_MIGRATIONS
         value: "1"
-
