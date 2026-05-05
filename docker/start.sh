@@ -1,6 +1,14 @@
 #!/usr/bin/env sh
 set -eu
 
+# Render and similar platforms provide the listening port via $PORT.
+# Apache defaults to 80, so we rewrite its config at runtime.
+LISTEN_PORT="${PORT:-80}"
+if [ "$LISTEN_PORT" != "80" ]; then
+  sed -i "s/^[[:space:]]*Listen[[:space:]]\\+80[[:space:]]*$/Listen ${LISTEN_PORT}/" /etc/apache2/ports.conf || true
+  sed -i "s/<VirtualHost \\*:80>/<VirtualHost *:${LISTEN_PORT}>/" /etc/apache2/sites-available/000-default.conf || true
+fi
+
 # Optional, but helpful in most platforms.
 php artisan config:clear || true
 php artisan route:clear || true
@@ -11,4 +19,3 @@ if [ "${RUN_MIGRATIONS:-1}" = "1" ]; then
 fi
 
 exec apache2-foreground
-
