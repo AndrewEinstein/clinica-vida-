@@ -28,6 +28,16 @@ O sistema Laravel completo precisa de ambiente PHP com Composer e banco PostgreS
 
 Este repositorio inclui um `Dockerfile` para subir o sistema completo em hosts com suporte a Docker.
 
+## Deploy no Render (Blueprint)
+
+Este repositorio inclui `render.yaml` para criar o servico automaticamente no Render.
+
+Variaveis que voce precisa preencher no Render:
+- `APP_URL` (o proprio Render mostra depois do deploy)
+- `DB_HOST` e `DB_PASSWORD` do Supabase
+
+O resto o Blueprint configura automaticamente.
+
 Variaveis obrigatorias no host:
 - `APP_KEY` (gere com `php artisan key:generate --show`)
 - `APP_URL`
