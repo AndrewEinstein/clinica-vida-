@@ -24,6 +24,18 @@ O Vercel deve ser usado para a previa estatica da pasta `preview`.
 
 O sistema Laravel completo precisa de ambiente PHP com Composer e banco PostgreSQL/MySQL, como VPS, Render, Railway, Fly.io ou similar.
 
+## Deploy do Laravel (Docker)
+
+Este repositorio inclui um `Dockerfile` para subir o sistema completo em hosts com suporte a Docker.
+
+Variaveis obrigatorias no host:
+- `APP_KEY` (gere com `php artisan key:generate --show`)
+- `APP_URL`
+- `DB_CONNECTION=pgsql`
+- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+
+O container roda `php artisan migrate --force` ao iniciar. Para desativar, defina `RUN_MIGRATIONS=0`.
+
 ## Requisitos
 
 - PHP 8.2+
