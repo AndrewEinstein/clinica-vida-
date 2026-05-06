@@ -25,10 +25,10 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && rm -f composer-setup.php
 
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
-
 COPY . .
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
