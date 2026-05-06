@@ -44,6 +44,9 @@ Variaveis obrigatorias no host:
 - `DB_CONNECTION=pgsql`
 - `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
 
+Observacao (Render x Supabase):
+- Alguns ambientes (ex: Render) nao possuem saida IPv6. Se o host `db.<ref>.supabase.co` resolver apenas IPv6, use `DB_URL` do pooler (Project Settings > Database > Connection string > Pooler) no lugar de `DB_HOST`.
+
 O container roda `php artisan migrate --force` ao iniciar. Para desativar, defina `RUN_MIGRATIONS=0`.
 
 ## Requisitos
