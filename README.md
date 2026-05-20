@@ -2,6 +2,8 @@
 
 Sistema SaaS multi-clinica para gestao de clinica medica, construido com Laravel 11, Blade, Bootstrap 5 e MySQL.
 
+Ultima atualizacao: 2026-05-19
+
 ## Modulos incluidos
 
 - Autenticacao e controle de perfis
