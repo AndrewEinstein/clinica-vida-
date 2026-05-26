@@ -3,7 +3,17 @@
 use Illuminate\Support\Str;
 
 return [
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => (static function (): string {
+        $default = env('DB_CONNECTION', 'mysql');
+
+        // Some hosts expose PostgreSQL URLs and users may copy/paste "postgresql".
+        // Normalize common variants/typos to Laravel's pgsql driver key.
+        if (in_array($default, ['postgresql', 'ostgresql'], true)) {
+            return 'pgsql';
+        }
+
+        return $default;
+    })(),
     'connections' => [
         'sqlite' => [
             'driver' => 'sqlite',
