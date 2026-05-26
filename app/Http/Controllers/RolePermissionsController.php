@@ -18,6 +18,8 @@ class RolePermissionsController extends Controller
         $roles = User::roleOptions();
         unset($roles[User::ROLE_SUPER_ADMIN]);
 
+        $selectedRole = (string) ($request->query('role') ?: array_key_first($roles));
+
         $permissions = Permission::query()
             ->orderBy('group')
             ->orderBy('name')
@@ -34,6 +36,7 @@ class RolePermissionsController extends Controller
             'roles' => $roles,
             'permissions' => $permissions,
             'assigned' => $assigned,
+            'selectedRole' => $selectedRole,
         ]);
     }
 
@@ -68,6 +71,8 @@ class RolePermissionsController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Permissoes atualizadas com sucesso.');
+        return redirect()
+            ->route('settings.role-permissions.index', ['role' => $data['role']])
+            ->with('success', 'Permissoes atualizadas com sucesso.');
     }
 }

@@ -18,9 +18,9 @@
             <div class="row g-3 align-items-end">
                 <div class="col-12 col-lg-4">
                     <label class="form-label">Perfil</label>
-                    <select name="role" class="form-select" required>
+                    <select name="role" class="form-select" required onchange="window.location='{{ route('settings.role-permissions.index') }}?role='+encodeURIComponent(this.value)">
                         @foreach($roles as $roleKey => $roleLabel)
-                            <option value="{{ $roleKey }}" {{ old('role')===$roleKey ? 'selected' : '' }}>{{ $roleLabel }}</option>
+                            <option value="{{ $roleKey }}" {{ (string) $selectedRole === (string) $roleKey ? 'selected' : '' }}>{{ $roleLabel }}</option>
                         @endforeach
                     </select>
                     @error('role')
@@ -38,7 +38,6 @@
 
             @php
                 $byGroup = $permissions->groupBy(fn($p) => $p->group ?: 'Geral');
-                $selectedRole = old('role') ?: array_key_first($roles);
                 $selected = $assigned[$selectedRole] ?? [];
             @endphp
 

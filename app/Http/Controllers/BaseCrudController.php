@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 abstract class BaseCrudController extends Controller
@@ -143,7 +144,21 @@ abstract class BaseCrudController extends Controller
 
     protected function baseQuery(): Builder
     {
-        return $this->modelClass::query()->with($this->with);
+        $query = $this->modelClass::query()->with($this->with);
+
+        // Enforce multi-clinic data separation for all clinic-scoped tables.
+        // If the model has a clinic_id column and the user is not Super Admin,
+        // restrict all reads to the user's clinic.
+        if (auth()->check() && ! auth()->user()->isSuperAdmin()) {
+            $model = new $this->modelClass;
+            $table = $model->getTable();
+
+            if (Schema::hasColumn($table, 'clinic_id')) {
+                $query->where($table.'.clinic_id', auth()->user()->clinic_id);
+            }
+        }
+
+        return $query;
     }
 
     protected function findRecord(string $id): Model

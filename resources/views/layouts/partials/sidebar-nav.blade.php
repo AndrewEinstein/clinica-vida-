@@ -52,4 +52,9 @@
     @can('role-permissions.manage')
         <a class="nav-link @activeRoute('settings.role-permissions.*') active @endactiveRoute" href="{{ route('settings.role-permissions.index') }}"><i class="bi bi-shield-lock"></i> Perfis e permissoes</a>
     @endcan
+
+    @can('viewAny', \App\Models\ItTicket::class)
+        <div class="nav-section">TI</div>
+        <a class="nav-link @activeRoute('it-tickets.*') active @endactiveRoute" href="{{ route('it-tickets.index') }}"><i class="bi bi-headset"></i> Chamados TI</a>
+    @endcan
 </nav>

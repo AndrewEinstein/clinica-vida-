@@ -1,0 +1,115 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+    <div>
+        <h2 class="h4 mb-1">Chamado #{{ $ticket->id }}</h2>
+        <div class="text-muted">{{ $ticket->subject }}</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        @can('update', $ticket)
+            <a href="{{ route('it-tickets.edit', $ticket) }}" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i>Editar</a>
+        @endcan
+        <a href="{{ route('it-tickets.index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-xl-5">
+        <div class="panel p-3 h-100">
+            <h3 class="h6 mb-3">Detalhes</h3>
+            <dl class="row mb-0">
+                <dt class="col-5">Tipo</dt><dd class="col-7">{{ \App\Models\ItTicket::typeOptions()[$ticket->type] ?? $ticket->type }}</dd>
+                <dt class="col-5">Prioridade</dt><dd class="col-7">{{ \App\Models\ItTicket::priorityOptions()[$ticket->priority] ?? $ticket->priority }}</dd>
+                <dt class="col-5">Status</dt><dd class="col-7"><span class="badge text-bg-light border text-dark">{{ \App\Models\ItTicket::statusOptions()[$ticket->status] ?? $ticket->status }}</span></dd>
+                <dt class="col-5">Solicitante</dt><dd class="col-7">{{ $ticket->requester?->name ?? '-' }}</dd>
+                <dt class="col-5">Responsavel</dt><dd class="col-7">{{ $ticket->assignedTo?->name ?? '-' }}</dd>
+                <dt class="col-5">Criado em</dt><dd class="col-7">{{ $ticket->created_at?->format('d/m/Y H:i') }}</dd>
+                <dt class="col-5">Resolvido em</dt><dd class="col-7">{{ $ticket->resolved_at?->format('d/m/Y H:i') ?? '-' }}</dd>
+                <dt class="col-5">Fechado em</dt><dd class="col-7">{{ $ticket->closed_at?->format('d/m/Y H:i') ?? '-' }}</dd>
+            </dl>
+
+            @if($ticket->description)
+                <hr>
+                <div class="small text-muted mb-1">Descricao</div>
+                <div class="text-body" style="white-space: pre-wrap;">{{ $ticket->description }}</div>
+            @endif
+
+            @if($ticket->resolution_notes)
+                <hr>
+                <div class="small text-muted mb-1">Notas de resolucao</div>
+                <div class="text-body" style="white-space: pre-wrap;">{{ $ticket->resolution_notes }}</div>
+            @endif
+        </div>
+    </div>
+
+    <div class="col-xl-7">
+        <div class="panel p-3 mb-3">
+            <h3 class="h6 mb-3">Atualizar status</h3>
+            @can('update', $ticket)
+                <form class="row g-2 align-items-end" method="POST" action="{{ route('it-tickets.update', $ticket) }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="clinic_id" value="{{ $ticket->clinic_id }}">
+                    <input type="hidden" name="type" value="{{ $ticket->type }}">
+                    <input type="hidden" name="priority" value="{{ $ticket->priority }}">
+                    <input type="hidden" name="subject" value="{{ $ticket->subject }}">
+                    <input type="hidden" name="description" value="{{ $ticket->description }}">
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            @foreach(\App\Models\ItTicket::statusOptions() as $k => $label)
+                                <option value="{{ $k }}" @selected($ticket->status === $k)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Responsavel</label>
+                        <select name="assigned_user_id" class="form-select">
+                            @foreach($assigneeOptions as $id => $label)
+                                <option value="{{ $id }}" @selected((string) $ticket->assigned_user_id === (string) $id)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary w-100" type="submit"><i class="bi bi-check2-circle me-1"></i>Salvar</button>
+                    </div>
+                </form>
+            @else
+                <div class="text-muted">Sem permissao para atualizar este chamado.</div>
+            @endcan
+        </div>
+
+        <div class="panel p-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h3 class="h6 mb-0">Comentarios</h3>
+            </div>
+
+            @can('comment', $ticket)
+                <form method="POST" action="{{ route('it-tickets.comment', $ticket) }}" class="mb-3">
+                    @csrf
+                    <div class="mb-2">
+                        <textarea name="message" class="form-control" rows="3" placeholder="Descreva o que aconteceu, o que voce esperava e como reproduzir..." required></textarea>
+                    </div>
+                    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-chat-dots me-1"></i>Adicionar comentario</button>
+                </form>
+            @endcan
+
+            <div class="vstack gap-2">
+                @forelse($comments as $comment)
+                    <div class="border rounded p-3 bg-white">
+                        <div class="d-flex justify-content-between">
+                            <div class="fw-semibold">{{ $comment->user?->name ?? 'Sistema' }}</div>
+                            <div class="text-muted small">{{ $comment->created_at?->format('d/m/Y H:i') }}</div>
+                        </div>
+                        <div class="mt-2" style="white-space: pre-wrap;">{{ $comment->message }}</div>
+                    </div>
+                @empty
+                    <div class="text-muted">Nenhum comentario ainda.</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+

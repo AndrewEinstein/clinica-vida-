@@ -40,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\FinancialTransaction::class => \App\Policies\FinancialTransactionPolicy::class,
             \App\Models\InsuranceProvider::class => \App\Policies\InsuranceProviderPolicy::class,
             \App\Models\ClinicSetting::class => \App\Policies\ClinicSettingPolicy::class,
+            \App\Models\ItTicket::class => \App\Policies\ItTicketPolicy::class,
         ] as $model => $policy) {
             Gate::policy($model, $policy);
         }

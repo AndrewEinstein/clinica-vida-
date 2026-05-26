@@ -36,6 +36,7 @@ class PermissionSeeder extends Seeder
             ['key' => 'reports.view', 'name' => 'Ver Relatorios', 'group' => 'Relatorios'],
             ['key' => 'settings.manage', 'name' => 'Gerenciar Configuracoes da Clinica', 'group' => 'Configuracoes'],
             ['key' => 'role-permissions.manage', 'name' => 'Gerenciar Permissoes por Perfil', 'group' => 'Configuracoes'],
+            ['key' => 'it-tickets.manage', 'name' => 'Gerenciar Chamados de TI', 'group' => 'TI'],
         ];
 
         foreach ($permissions as $perm) {
