@@ -7,9 +7,13 @@ use App\Models\User;
 
 class ItTicketPolicy extends ClinicScopedPolicy
 {
-    protected ?string $permissionViewKey = 'it-tickets.manage';
+    protected ?string $permissionViewKey = 'it-tickets.view';
 
-    protected ?string $permissionManageKey = 'it-tickets.manage';
+    protected ?string $permissionCreateKey = 'it-tickets.create';
+
+    protected ?string $permissionUpdateKey = 'it-tickets.edit';
+
+    protected ?string $permissionDeleteKey = 'it-tickets.delete';
 
     protected array $viewRoles = [
         User::ROLE_ADMIN,
@@ -36,4 +40,3 @@ class ItTicketPolicy extends ClinicScopedPolicy
         return $this->view($user, $ticket);
     }
 }
-

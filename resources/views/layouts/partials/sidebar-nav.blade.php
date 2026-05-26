@@ -49,6 +49,10 @@
         <a class="nav-link @activeRoute('settings.*') active @endactiveRoute" href="{{ route('settings.index') }}"><i class="bi bi-sliders"></i> Configuracoes</a>
     @endcan
 
+    @can('viewAny', \App\Models\Role::class)
+        <a class="nav-link @activeRoute('roles.*') active @endactiveRoute" href="{{ route('roles.index') }}"><i class="bi bi-diagram-3"></i> Perfis</a>
+    @endcan
+
     @can('role-permissions.manage')
         <a class="nav-link @activeRoute('settings.role-permissions.*') active @endactiveRoute" href="{{ route('settings.role-permissions.index') }}"><i class="bi bi-shield-lock"></i> Perfis e permissoes</a>
     @endcan

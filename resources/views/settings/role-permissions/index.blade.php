@@ -43,30 +43,46 @@
             <hr class="my-4">
 
             @php
-                $byGroup = $permissions->groupBy(fn($p) => $p->group ?: 'Geral');
                 $selected = $assigned[$selectedRole] ?? [];
             @endphp
 
-            <div class="row g-4">
-                @foreach($byGroup as $group => $items)
-                    <div class="col-12 col-lg-6">
-                        <div class="border rounded p-3 h-100">
-                            <div class="fw-semibold mb-2">{{ $group }}</div>
-                            @foreach($items as $perm)
-                                @php
-                                    $checked = in_array($perm->key, $selected, true);
-                                @endphp
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $perm->key }}" id="perm_{{ $perm->id }}" {{ $checked ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="perm_{{ $perm->id }}">
-                                        {{ $perm->name }}
-                                        <span class="text-muted small">({{ $perm->key }})</span>
-                                    </label>
-                                </div>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 220px;">Modulo</th>
+                            @foreach($actions as $actionKey => $actionLabel)
+                                <th class="text-center" style="min-width: 110px;">{{ $actionLabel }}</th>
                             @endforeach
-                        </div>
-                    </div>
-                @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($matrix as $module => $cols)
+                            <tr>
+                                <td class="fw-semibold">{{ strtoupper(str_replace(['-', '_'], ' ', $module)) }}</td>
+                                @foreach($actions as $actionKey => $actionLabel)
+                                    @php
+                                        $perm = $cols[$actionKey] ?? null;
+                                        $checked = $perm ? in_array($perm->key, $selected, true) : false;
+                                    @endphp
+                                    <td class="text-center">
+                                        @if($perm)
+                                            <div class="form-check d-inline-block m-0">
+                                                <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $perm->key }}" id="perm_{{ $perm->id }}" {{ $checked ? 'checked' : '' }}>
+                                            </div>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ 1 + count($actions) }}" class="text-muted">Nenhuma permissao cadastrada.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </form>
     </div>

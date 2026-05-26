@@ -10,6 +10,7 @@ use App\Http\Controllers\ExamRequestController;
 use App\Http\Controllers\FinancialTransactionController;
 use App\Http\Controllers\InsuranceProviderController;
 use App\Http\Controllers\ItTicketController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\MedicalCareController;
 use App\Http\Controllers\MedicalCertificateController;
 use App\Http\Controllers\MedicalRecordController;
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('insurance-providers', InsuranceProviderController::class);
     Route::resource('it-tickets', ItTicketController::class);
     Route::post('it-tickets/{it_ticket}/comment', [ItTicketController::class, 'comment'])->name('it-tickets.comment');
+    Route::resource('roles', RoleController::class);
 
     Route::get('settings/role-permissions', [RolePermissionsController::class, 'index'])->name('settings.role-permissions.index');
     Route::post('settings/role-permissions', [RolePermissionsController::class, 'update'])->name('settings.role-permissions.update');

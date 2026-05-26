@@ -6,9 +6,13 @@ use App\Models\User;
 
 class PatientPolicy extends ClinicScopedPolicy
 {
-    protected ?string $permissionViewKey = 'patients.manage';
+    protected ?string $permissionViewKey = 'patients.view';
 
-    protected ?string $permissionManageKey = 'patients.manage';
+    protected ?string $permissionCreateKey = 'patients.create';
+
+    protected ?string $permissionUpdateKey = 'patients.edit';
+
+    protected ?string $permissionDeleteKey = 'patients.delete';
 
     protected array $viewRoles = [
         User::ROLE_ADMIN,

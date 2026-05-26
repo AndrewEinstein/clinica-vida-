@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable
 {
@@ -44,7 +45,7 @@ class User extends Authenticatable
 
     public static function roleOptions(): array
     {
-        return [
+        $system = [
             self::ROLE_SUPER_ADMIN => 'Super Admin',
             self::ROLE_ADMIN => 'Administrador da clinica',
             self::ROLE_DOCTOR => 'Medico',
@@ -52,6 +53,34 @@ class User extends Authenticatable
             self::ROLE_NURSE => 'Triagem/Enfermagem',
             self::ROLE_FINANCE => 'Financeiro',
         ];
+
+        // If roles table exists, merge clinic-specific roles for the current user (or super admin chosen clinic).
+        try {
+            if (Schema::hasTable('roles') && auth()->check()) {
+                $user = auth()->user();
+                $clinicId = $user?->clinic_id;
+
+                $custom = Role::query()
+                    ->where('status', 'active')
+                    ->where(function ($q) use ($clinicId, $user) {
+                        $q->where('is_system', true);
+                        if ($clinicId) {
+                            $q->orWhere('clinic_id', $clinicId);
+                        }
+                    })
+                    ->orderByDesc('is_system')
+                    ->orderBy('name')
+                    ->pluck('name', 'key')
+                    ->toArray();
+
+                // Prefer DB names for system roles if present (but keep fallback).
+                return array_replace($system, $custom);
+            }
+        } catch (\Throwable $e) {
+            // Ignore if DB not ready yet.
+        }
+
+        return $system;
     }
 
     public static function statusOptions(): array

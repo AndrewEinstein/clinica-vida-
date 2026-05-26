@@ -38,11 +38,26 @@ class RolePermissionsController extends Controller
             ->map(fn ($items) => $items->pluck('permission.key')->all())
             ->all();
 
+        $actions = ['view' => 'Visualizar', 'create' => 'Criar', 'edit' => 'Editar', 'delete' => 'Excluir', 'approve' => 'Aprovar', 'export' => 'Exportar'];
+
+        $matrix = [];
+        foreach ($permissions as $perm) {
+            $parts = explode('.', (string) $perm->key, 2);
+            $module = $parts[0] ?? 'outros';
+            $action = $parts[1] ?? 'access';
+            if (! array_key_exists($action, $actions)) {
+                continue;
+            }
+            $matrix[$module][$action] = $perm;
+        }
+
         return view('settings.role-permissions.index', [
             'roles' => $roles,
             'permissions' => $permissions,
             'assigned' => $assigned,
             'selectedRole' => $selectedRole,
+            'actions' => $actions,
+            'matrix' => $matrix,
         ]);
     }
 

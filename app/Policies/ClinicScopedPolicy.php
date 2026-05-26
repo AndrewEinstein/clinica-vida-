@@ -16,7 +16,11 @@ abstract class ClinicScopedPolicy
 
     protected ?string $permissionViewKey = null;
 
-    protected ?string $permissionManageKey = null;
+    protected ?string $permissionCreateKey = null;
+
+    protected ?string $permissionUpdateKey = null;
+
+    protected ?string $permissionDeleteKey = null;
 
     public function viewAny(User $user): bool
     {
@@ -30,17 +34,17 @@ abstract class ClinicScopedPolicy
 
     public function create(User $user): bool
     {
-        return $this->isAllowed($user, $this->permissionManageKey, $this->manageRoles);
+        return $this->isAllowed($user, $this->permissionCreateKey, $this->manageRoles);
     }
 
     public function update(User $user, Model $model): bool
     {
-        return $this->isAllowed($user, $this->permissionManageKey, $this->manageRoles) && $this->sameClinic($user, $model);
+        return $this->isAllowed($user, $this->permissionUpdateKey, $this->manageRoles) && $this->sameClinic($user, $model);
     }
 
     public function delete(User $user, Model $model): bool
     {
-        return $this->isAllowed($user, $this->permissionManageKey, $this->deleteRoles) && $this->sameClinic($user, $model);
+        return $this->isAllowed($user, $this->permissionDeleteKey, $this->deleteRoles) && $this->sameClinic($user, $model);
     }
 
     protected function isAllowed(User $user, ?string $permissionKey, array $roles): bool
