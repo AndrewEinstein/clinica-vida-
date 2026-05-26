@@ -49,6 +49,11 @@ class AppServiceProvider extends ServiceProvider
             return $user->isSuperAdmin() ? true : null;
         });
 
+        // Always available gate (does not depend on DB). Used to access the role/permissions UI.
+        Gate::define('role-permissions.manage', function (User $user): bool {
+            return $user->isSuperAdmin() || $user->hasRole(User::ROLE_ADMIN);
+        });
+
         Blade::if('activeRoute', function (string|array $routes): bool {
             return request()->routeIs(...(array) $routes);
         });

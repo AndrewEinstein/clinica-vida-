@@ -12,6 +12,12 @@
 
 <div class="card shadow-sm">
     <div class="card-body">
+        @if(!empty($setupError))
+            <div class="alert alert-warning mb-3" role="alert">
+                {{ $setupError }}
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('settings.role-permissions.update') }}">
             @csrf
 

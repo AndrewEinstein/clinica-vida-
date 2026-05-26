@@ -7,6 +7,7 @@ use App\Models\RolePermission;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class RolePermissionsController extends Controller
@@ -20,14 +21,19 @@ class RolePermissionsController extends Controller
 
         $selectedRole = (string) ($request->query('role') ?: array_key_first($roles));
 
-        $permissions = Permission::query()
-            ->orderBy('group')
-            ->orderBy('name')
-            ->get();
+        if (! Schema::hasTable('permissions') || ! Schema::hasTable('role_permissions')) {
+            return view('settings.role-permissions.index', [
+                'roles' => $roles,
+                'permissions' => collect(),
+                'assigned' => [],
+                'selectedRole' => $selectedRole,
+                'setupError' => 'Modulo de permissoes ainda nao foi instalado no banco. Rode as migrations e seed no Render (RUN_MIGRATIONS=1 e RUN_SEEDERS=1 em um deploy).',
+            ]);
+        }
 
-        $assigned = RolePermission::query()
-            ->with('permission')
-            ->get()
+        $permissions = Permission::query()->orderBy('group')->orderBy('name')->get();
+
+        $assigned = RolePermission::query()->with('permission')->get()
             ->groupBy('role')
             ->map(fn ($items) => $items->pluck('permission.key')->all())
             ->all();
@@ -43,6 +49,10 @@ class RolePermissionsController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $this->authorize('role-permissions.manage');
+
+        if (! Schema::hasTable('permissions') || ! Schema::hasTable('role_permissions')) {
+            return back()->withErrors(['permissions' => 'Tabelas de permissoes nao existem no banco ainda. Rode migrations/seed no Render.']);
+        }
 
         $roles = array_keys(User::roleOptions());
         $rules = [
