@@ -57,10 +57,12 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('insurance-providers', InsuranceProviderController::class);
     Route::resource('it-tickets', ItTicketController::class);
     Route::post('it-tickets/{it_ticket}/comment', [ItTicketController::class, 'comment'])->name('it-tickets.comment');
-    Route::resource('settings', ClinicSettingController::class);
 
     Route::get('settings/role-permissions', [RolePermissionsController::class, 'index'])->name('settings.role-permissions.index');
     Route::post('settings/role-permissions', [RolePermissionsController::class, 'update'])->name('settings.role-permissions.update');
+
+    // Keep after the more specific settings/* routes to avoid route conflicts with settings/{setting}.
+    Route::resource('settings', ClinicSettingController::class);
 
     Route::resource('reports', ReportController::class)->only(['index']);
 });
