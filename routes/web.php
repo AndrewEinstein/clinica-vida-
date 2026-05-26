@@ -17,6 +17,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TriageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RolePermissionsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function (): void {
@@ -54,5 +55,9 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('finance', FinancialTransactionController::class);
     Route::resource('insurance-providers', InsuranceProviderController::class);
     Route::resource('settings', ClinicSettingController::class);
+
+    Route::get('settings/role-permissions', [RolePermissionsController::class, 'index'])->name('settings.role-permissions.index');
+    Route::post('settings/role-permissions', [RolePermissionsController::class, 'update'])->name('settings.role-permissions.update');
+
     Route::resource('reports', ReportController::class)->only(['index']);
 });

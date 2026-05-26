@@ -14,6 +14,8 @@ class DashboardController extends Controller
 {
     public function __invoke(): View
     {
+        $this->authorize('dashboard.view');
+
         $today = Carbon::today();
 
         return view('dashboard.index', [

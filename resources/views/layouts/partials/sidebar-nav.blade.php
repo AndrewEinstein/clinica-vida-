@@ -1,6 +1,8 @@
 <nav class="py-2">
     <div class="nav-section">Operacao</div>
-    <a class="nav-link @activeRoute('dashboard') active @endactiveRoute" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    @can('dashboard.view')
+        <a class="nav-link @activeRoute('dashboard') active @endactiveRoute" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    @endcan
     @can('viewAny', \App\Models\Appointment::class)
         <a class="nav-link @activeRoute('appointments.*') active @endactiveRoute" href="{{ route('appointments.index') }}"><i class="bi bi-calendar2-week"></i> Agenda</a>
     @endcan
@@ -45,5 +47,9 @@
     @endcan
     @can('viewAny', \App\Models\ClinicSetting::class)
         <a class="nav-link @activeRoute('settings.*') active @endactiveRoute" href="{{ route('settings.index') }}"><i class="bi bi-sliders"></i> Configuracoes</a>
+    @endcan
+
+    @can('role-permissions.manage')
+        <a class="nav-link @activeRoute('settings.role-permissions.*') active @endactiveRoute" href="{{ route('settings.role-permissions.index') }}"><i class="bi bi-shield-lock"></i> Perfis e permissoes</a>
     @endcan
 </nav>

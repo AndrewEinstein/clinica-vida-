@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -66,6 +67,11 @@ class User extends Authenticatable
         return $this->belongsTo(Clinic::class);
     }
 
+    public function rolePermissions(): HasMany
+    {
+        return $this->hasMany(RolePermission::class, 'role', 'role');
+    }
+
     public function isSuperAdmin(): bool
     {
         return $this->role === self::ROLE_SUPER_ADMIN;
@@ -84,5 +90,22 @@ class User extends Authenticatable
     public function roleLabel(): string
     {
         return self::roleOptions()[$this->role] ?? $this->role;
+    }
+
+    public function hasPermission(string $key): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        // Clinic Admin: allow everything inside the clinic by default unless you want to restrict later.
+        if ($this->hasRole(self::ROLE_ADMIN)) {
+            return true;
+        }
+
+        return RolePermission::query()
+            ->where('role', $this->role)
+            ->whereHas('permission', fn ($q) => $q->where('key', $key))
+            ->exists();
     }
 }

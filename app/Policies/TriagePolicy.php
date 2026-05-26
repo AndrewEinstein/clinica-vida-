@@ -7,6 +7,10 @@ use App\Models\User;
 
 class TriagePolicy extends ClinicScopedPolicy
 {
+    protected ?string $permissionViewKey = 'triages.manage';
+
+    protected ?string $permissionManageKey = 'triages.manage';
+
     protected array $viewRoles = [
         User::ROLE_ADMIN,
         User::ROLE_RECEPTIONIST,

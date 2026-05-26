@@ -6,6 +6,10 @@ use App\Models\User;
 
 class ExamRequestPolicy extends ClinicScopedPolicy
 {
+    protected ?string $permissionViewKey = 'exam-requests.manage';
+
+    protected ?string $permissionManageKey = 'exam-requests.manage';
+
     protected array $viewRoles = [
         User::ROLE_ADMIN,
         User::ROLE_RECEPTIONIST,

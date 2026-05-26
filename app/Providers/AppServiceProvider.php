@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Permission;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,5 +51,14 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('activeRoute', function (string|array $routes): bool {
             return request()->routeIs(...(array) $routes);
         });
+
+        // Dynamic permission gates: can('perm.key')
+        try {
+            foreach (Permission::query()->select(['key'])->get() as $perm) {
+                Gate::define($perm->key, fn (User $user): bool => $user->hasPermission($perm->key));
+            }
+        } catch (\Throwable $e) {
+            // During early deploys/migrations the permissions table might not exist yet.
+        }
     }
 }

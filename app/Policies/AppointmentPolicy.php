@@ -7,6 +7,10 @@ use App\Models\User;
 
 class AppointmentPolicy extends ClinicScopedPolicy
 {
+    protected ?string $permissionViewKey = 'appointments.manage';
+
+    protected ?string $permissionManageKey = 'appointments.manage';
+
     protected array $viewRoles = [
         User::ROLE_ADMIN,
         User::ROLE_RECEPTIONIST,

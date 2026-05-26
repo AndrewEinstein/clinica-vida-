@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(PermissionSeeder::class);
+
         $clinicA = Clinic::create([
             'name' => 'Clinica Vida+',
             'cnpj' => '12.345.678/0001-90',

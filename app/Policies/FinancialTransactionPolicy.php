@@ -6,6 +6,10 @@ use App\Models\User;
 
 class FinancialTransactionPolicy extends ClinicScopedPolicy
 {
+    protected ?string $permissionViewKey = 'finance.manage';
+
+    protected ?string $permissionManageKey = 'finance.manage';
+
     protected array $viewRoles = [
         User::ROLE_ADMIN,
         User::ROLE_FINANCE,

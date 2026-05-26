@@ -6,6 +6,10 @@ use App\Models\User;
 
 class MedicalCertificatePolicy extends ClinicScopedPolicy
 {
+    protected ?string $permissionViewKey = 'medical-certificates.manage';
+
+    protected ?string $permissionManageKey = 'medical-certificates.manage';
+
     protected array $viewRoles = [
         User::ROLE_ADMIN,
         User::ROLE_RECEPTIONIST,

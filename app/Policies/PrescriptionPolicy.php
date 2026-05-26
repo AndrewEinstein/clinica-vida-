@@ -6,6 +6,10 @@ use App\Models\User;
 
 class PrescriptionPolicy extends ClinicScopedPolicy
 {
+    protected ?string $permissionViewKey = 'prescriptions.manage';
+
+    protected ?string $permissionManageKey = 'prescriptions.manage';
+
     protected array $viewRoles = [
         User::ROLE_ADMIN,
         User::ROLE_RECEPTIONIST,
