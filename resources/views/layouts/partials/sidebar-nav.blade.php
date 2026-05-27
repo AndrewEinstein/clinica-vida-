@@ -59,6 +59,7 @@
 
     @can('viewAny', \App\Models\ItTicket::class)
         <div class="nav-section">TI</div>
+        <a class="nav-link @activeRoute('it-tickets.dashboard') active @endactiveRoute" href="{{ route('it-tickets.dashboard') }}"><i class="bi bi-speedometer"></i> Dashboard TI</a>
         <a class="nav-link @activeRoute('it-tickets.*') active @endactiveRoute" href="{{ route('it-tickets.index') }}"><i class="bi bi-headset"></i> Chamados TI</a>
     @endcan
 </nav>

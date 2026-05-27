@@ -21,8 +21,18 @@ class ItTicket extends Model
     public const PRIORITY_HIGH = 'high';
     public const PRIORITY_URGENT = 'urgent';
 
+    public const IMPACT_LOW = 'low';
+    public const IMPACT_MEDIUM = 'medium';
+    public const IMPACT_HIGH = 'high';
+
+    public const URGENCY_LOW = 'low';
+    public const URGENCY_MEDIUM = 'medium';
+    public const URGENCY_HIGH = 'high';
+    public const URGENCY_URGENT = 'urgent';
+
     public const STATUS_OPEN = 'open';
     public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_WAITING_USER = 'waiting_user';
     public const STATUS_RESOLVED = 'resolved';
     public const STATUS_CLOSED = 'closed';
 
@@ -32,10 +42,17 @@ class ItTicket extends Model
         'assigned_user_id',
         'type',
         'priority',
+        'urgency',
+        'impact',
         'status',
+        'category',
+        'subcategory',
+        'requester_department',
         'subject',
         'description',
+        'internal_notes',
         'resolution_notes',
+        'sla_due_at',
         'resolved_at',
         'closed_at',
     ];
@@ -43,6 +60,7 @@ class ItTicket extends Model
     protected function casts(): array
     {
         return [
+            'sla_due_at' => 'datetime',
             'resolved_at' => 'datetime',
             'closed_at' => 'datetime',
         ];
@@ -68,11 +86,31 @@ class ItTicket extends Model
         ];
     }
 
+    public static function impactOptions(): array
+    {
+        return [
+            self::IMPACT_LOW => 'Baixo',
+            self::IMPACT_MEDIUM => 'Medio',
+            self::IMPACT_HIGH => 'Alto',
+        ];
+    }
+
+    public static function urgencyOptions(): array
+    {
+        return [
+            self::URGENCY_LOW => 'Baixa',
+            self::URGENCY_MEDIUM => 'Media',
+            self::URGENCY_HIGH => 'Alta',
+            self::URGENCY_URGENT => 'Urgente',
+        ];
+    }
+
     public static function statusOptions(): array
     {
         return [
             self::STATUS_OPEN => 'Aberto',
             self::STATUS_IN_PROGRESS => 'Em andamento',
+            self::STATUS_WAITING_USER => 'Aguardando usuario',
             self::STATUS_RESOLVED => 'Resolvido',
             self::STATUS_CLOSED => 'Fechado',
         ];
@@ -97,5 +135,22 @@ class ItTicket extends Model
     {
         return $this->hasMany(ItTicketComment::class, 'ticket_id')->latest();
     }
-}
 
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(ItTicketAttachment::class, 'ticket_id')->latest();
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(ItTicketEvent::class, 'ticket_id')->latest();
+    }
+
+    public function isOverdue(): bool
+    {
+        return $this->sla_due_at !== null
+            && $this->resolved_at === null
+            && $this->closed_at === null
+            && now()->greaterThan($this->sla_due_at);
+    }
+}

@@ -21,10 +21,16 @@
             <dl class="row mb-0">
                 <dt class="col-5">Tipo</dt><dd class="col-7">{{ \App\Models\ItTicket::typeOptions()[$ticket->type] ?? $ticket->type }}</dd>
                 <dt class="col-5">Prioridade</dt><dd class="col-7">{{ \App\Models\ItTicket::priorityOptions()[$ticket->priority] ?? $ticket->priority }}</dd>
+                <dt class="col-5">Urgencia</dt><dd class="col-7">{{ \App\Models\ItTicket::urgencyOptions()[$ticket->urgency] ?? ($ticket->urgency ?: '-') }}</dd>
+                <dt class="col-5">Impacto</dt><dd class="col-7">{{ \App\Models\ItTicket::impactOptions()[$ticket->impact] ?? ($ticket->impact ?: '-') }}</dd>
                 <dt class="col-5">Status</dt><dd class="col-7"><span class="badge text-bg-light border text-dark">{{ \App\Models\ItTicket::statusOptions()[$ticket->status] ?? $ticket->status }}</span></dd>
                 <dt class="col-5">Solicitante</dt><dd class="col-7">{{ $ticket->requester?->name ?? '-' }}</dd>
+                <dt class="col-5">Setor</dt><dd class="col-7">{{ $ticket->requester_department ?? '-' }}</dd>
+                <dt class="col-5">Categoria</dt><dd class="col-7">{{ $ticket->category ?? '-' }}</dd>
+                <dt class="col-5">Subcategoria</dt><dd class="col-7">{{ $ticket->subcategory ?? '-' }}</dd>
                 <dt class="col-5">Responsavel</dt><dd class="col-7">{{ $ticket->assignedTo?->name ?? '-' }}</dd>
                 <dt class="col-5">Criado em</dt><dd class="col-7">{{ $ticket->created_at?->format('d/m/Y H:i') }}</dd>
+                <dt class="col-5">Prazo/SLA</dt><dd class="col-7">{{ $ticket->sla_due_at?->format('d/m/Y H:i') ?? '-' }}</dd>
                 <dt class="col-5">Resolvido em</dt><dd class="col-7">{{ $ticket->resolved_at?->format('d/m/Y H:i') ?? '-' }}</dd>
                 <dt class="col-5">Fechado em</dt><dd class="col-7">{{ $ticket->closed_at?->format('d/m/Y H:i') ?? '-' }}</dd>
             </dl>
@@ -35,11 +41,34 @@
                 <div class="text-body" style="white-space: pre-wrap;">{{ $ticket->description }}</div>
             @endif
 
+            @if($ticket->internal_notes && auth()->user()->hasPermission('it-tickets.edit'))
+                <hr>
+                <div class="small text-muted mb-1">Observacoes internas (TI)</div>
+                <div class="text-body" style="white-space: pre-wrap;">{{ $ticket->internal_notes }}</div>
+            @endif
+
             @if($ticket->resolution_notes)
                 <hr>
                 <div class="small text-muted mb-1">Notas de resolucao</div>
                 <div class="text-body" style="white-space: pre-wrap;">{{ $ticket->resolution_notes }}</div>
             @endif
+
+            <hr>
+            <div class="small text-muted mb-2">Anexos</div>
+            <div class="vstack gap-2">
+                @forelse(($attachments ?? []) as $att)
+                    <div class="d-flex align-items-center justify-content-between border rounded p-2 bg-white">
+                        <div class="text-truncate">
+                            <i class="bi bi-paperclip me-1"></i>
+                            {{ $att->original_name ?? basename($att->path) }}
+                            <div class="text-muted small">{{ $att->created_at?->format('d/m/Y H:i') }}{{ $att->user ? ' • '.$att->user->name : '' }}</div>
+                        </div>
+                        <a class="btn btn-sm btn-outline-primary" href="{{ asset('storage/'.$att->path) }}" target="_blank" rel="noopener">Abrir</a>
+                    </div>
+                @empty
+                    <div class="text-muted">Nenhum anexo.</div>
+                @endforelse
+            </div>
         </div>
     </div>
 
@@ -86,8 +115,23 @@
             </div>
 
             @can('comment', $ticket)
-                <form method="POST" action="{{ route('it-tickets.comment', $ticket) }}" class="mb-3">
+                <form method="POST" action="{{ route('it-tickets.comment', $ticket) }}" class="mb-3" enctype="multipart/form-data">
                     @csrf
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Visibilidade</label>
+                            <select name="visibility" class="form-select">
+                                <option value="public">Publico</option>
+                                @if(auth()->user()->hasPermission('it-tickets.edit'))
+                                    <option value="internal">Interno (TI)</option>
+                                @endif
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Anexos</label>
+                            <input type="file" name="attachments[]" class="form-control" multiple>
+                        </div>
+                    </div>
                     <div class="mb-2">
                         <textarea name="message" class="form-control" rows="3" placeholder="Descreva o que aconteceu, o que voce esperava e como reproduzir..." required></textarea>
                     </div>
@@ -97,11 +141,15 @@
 
             <div class="vstack gap-2">
                 @forelse($comments as $comment)
+                    @continue($comment->visibility === 'internal' && ! auth()->user()->hasPermission('it-tickets.edit'))
                     <div class="border rounded p-3 bg-white">
                         <div class="d-flex justify-content-between">
                             <div class="fw-semibold">{{ $comment->user?->name ?? 'Sistema' }}</div>
                             <div class="text-muted small">{{ $comment->created_at?->format('d/m/Y H:i') }}</div>
                         </div>
+                        @if($comment->visibility === 'internal')
+                            <div class="text-muted small mt-1">Interno (TI)</div>
+                        @endif
                         <div class="mt-2" style="white-space: pre-wrap;">{{ $comment->message }}</div>
                     </div>
                 @empty
@@ -112,4 +160,3 @@
     </div>
 </div>
 @endsection
-

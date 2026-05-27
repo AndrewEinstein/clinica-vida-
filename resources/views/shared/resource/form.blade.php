@@ -37,12 +37,13 @@
                         @endforeach
                     </select>
                 @elseif($type === 'textarea')
-                    <textarea name="{{ $name }}" rows="4" class="{{ $classes }}" @if($field['required'] ?? false) required @endif @if($field['readonly'] ?? false) readonly @endif>{{ $value }}</textarea>
+                    <textarea name="{{ $name }}" rows="{{ $field['rows'] ?? 4 }}" class="{{ $classes }}" @if($field['required'] ?? false) required @endif @if($field['readonly'] ?? false) readonly @endif>{{ $value }}</textarea>
                 @elseif($type === 'file')
                     <input
                         type="file"
                         name="{{ $name }}"
                         class="{{ $classes }}"
+                        @if($field['multiple'] ?? false) multiple @endif
                         @if($field['required'] ?? false) required @endif
                     >
                 @else

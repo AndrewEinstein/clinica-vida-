@@ -24,11 +24,19 @@ class ItTicketRequest extends FormRequest
             'assigned_user_id' => ['nullable', 'integer', 'exists:users,id'],
             'type' => ['required', Rule::in(array_keys(ItTicket::typeOptions()))],
             'priority' => ['required', Rule::in(array_keys(ItTicket::priorityOptions()))],
+            'urgency' => ['nullable', Rule::in(array_keys(ItTicket::urgencyOptions()))],
+            'impact' => ['nullable', Rule::in(array_keys(ItTicket::impactOptions()))],
             'status' => ['required', Rule::in(array_keys(ItTicket::statusOptions()))],
+            'category' => ['nullable', 'string', 'max:120'],
+            'subcategory' => ['nullable', 'string', 'max:120'],
+            'requester_department' => ['nullable', 'string', 'max:120'],
             'subject' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'internal_notes' => ['nullable', 'string'],
             'resolution_notes' => ['nullable', 'string'],
+            'sla_due_at' => ['nullable', 'date'],
+            'attachments' => ['array'],
+            'attachments.*' => ['file', 'max:5120'],
         ];
     }
 }
-

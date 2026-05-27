@@ -6,16 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ItTicketComment extends Model
+class ItTicketEvent extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'ticket_id',
         'user_id',
-        'visibility',
-        'message',
+        'type',
+        'meta',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'array',
+        ];
+    }
 
     public function ticket(): BelongsTo
     {
@@ -27,3 +34,4 @@ class ItTicketComment extends Model
         return $this->belongsTo(User::class);
     }
 }
+
