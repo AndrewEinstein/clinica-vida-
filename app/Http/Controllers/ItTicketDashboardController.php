@@ -19,6 +19,17 @@ class ItTicketDashboardController extends Controller
             $base->where('clinic_id', $request->user()?->clinic_id);
         }
 
+        // Dashboard scope:
+        // - TI/Admin (it-tickets.edit) sees all in the clinic
+        // - Common user sees only their tickets
+        $canSeeAll = $request->user()?->isSuperAdmin() || $request->user()?->hasPermission('it-tickets.edit') || $request->user()?->hasRole(\App\Models\User::ROLE_ADMIN);
+        if (! $canSeeAll) {
+            $base->where(function ($q) use ($request) {
+                $q->where('requester_user_id', $request->user()?->id)
+                    ->orWhere('assigned_user_id', $request->user()?->id);
+            });
+        }
+
         $totalOpen = (clone $base)->whereIn('status', [ItTicket::STATUS_OPEN, ItTicket::STATUS_IN_PROGRESS, ItTicket::STATUS_WAITING_USER])->count();
         $totalInProgress = (clone $base)->where('status', ItTicket::STATUS_IN_PROGRESS)->count();
         $totalWaitingUser = (clone $base)->where('status', ItTicket::STATUS_WAITING_USER)->count();

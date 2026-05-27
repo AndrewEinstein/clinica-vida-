@@ -284,5 +284,15 @@ class ItTicketController extends BaseCrudController
                 'meta' => ['name' => $file->getClientOriginalName()],
             ]);
         }
+
+        // Internal notes change event (only for TI)
+        if (! $isCreate && $request->filled('internal_notes') && auth()->user()?->hasPermission('it-tickets.edit')) {
+            ItTicketEvent::create([
+                'ticket_id' => $record->id,
+                'user_id' => auth()->id(),
+                'type' => 'internal_note',
+                'meta' => null,
+            ]);
+        }
     }
 }

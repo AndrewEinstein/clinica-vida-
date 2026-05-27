@@ -74,6 +74,54 @@
 
     <div class="col-xl-7">
         <div class="panel p-3 mb-3">
+            <h3 class="h6 mb-3">Linha do tempo</h3>
+            <div class="vstack gap-2">
+                @forelse(($events ?? []) as $ev)
+                    <div class="border rounded p-3 bg-white">
+                        <div class="d-flex justify-content-between">
+                            <div class="fw-semibold">
+                                @php
+                                    $label = match($ev->type) {
+                                        'created' => 'Chamado aberto',
+                                        'assigned' => 'Responsavel alterado',
+                                        'status_changed' => 'Status alterado',
+                                        'comment' => 'Comentario',
+                                        'attachment' => 'Anexo adicionado',
+                                        'internal_note' => 'Observacao interna atualizada',
+                                        default => $ev->type,
+                                    };
+                                @endphp
+                                {{ $label }}
+                            </div>
+                            <div class="text-muted small">{{ $ev->created_at?->format('d/m/Y H:i') }}</div>
+                        </div>
+                        <div class="text-muted small">
+                            {{ $ev->user?->name ?? 'Sistema' }}
+                            @if($ev->type === 'status_changed')
+                                @php $from = $ev->meta['from'] ?? null; $to = $ev->meta['to'] ?? null; @endphp
+                                • {{ \App\Models\ItTicket::statusOptions()[$from] ?? $from }} → {{ \App\Models\ItTicket::statusOptions()[$to] ?? $to }}
+                            @endif
+                            @if($ev->type === 'assigned')
+                                @php $to = $ev->meta['to'] ?? null; @endphp
+                                • {{ $to ? ('Atribuido (ID '.$to.')') : 'Sem responsavel' }}
+                            @endif
+                            @if($ev->type === 'attachment')
+                                @php $name = $ev->meta['name'] ?? null; @endphp
+                                @if($name) • {{ $name }} @endif
+                            @endif
+                            @if($ev->type === 'comment')
+                                @php $vis = $ev->meta['visibility'] ?? 'public'; @endphp
+                                • {{ $vis === 'internal' ? 'Interno (TI)' : 'Publico' }}
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-muted">Nenhum evento registrado.</div>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="panel p-3 mb-3">
             <h3 class="h6 mb-3">Atualizar status</h3>
             @can('update', $ticket)
                 <form class="row g-2 align-items-end" method="POST" action="{{ route('it-tickets.update', $ticket) }}">

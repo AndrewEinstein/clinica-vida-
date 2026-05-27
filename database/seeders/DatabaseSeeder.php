@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(PermissionSeeder::class);
+        $this->call(RoleDefaultsSeeder::class);
 
         $clinicA = Clinic::create([
             'name' => 'Clinica Vida+',
@@ -97,6 +98,24 @@ class DatabaseSeeder extends Seeder
             'email' => 'financeiro@clinicavida.test',
             'password' => 'password',
             'role' => User::ROLE_FINANCE,
+            'status' => 'active',
+        ]);
+
+        User::create([
+            'clinic_id' => $clinicA->id,
+            'name' => 'Tecnico de TI',
+            'email' => 'ti.tecnico@clinicavida.test',
+            'password' => 'password',
+            'role' => 'ti_tecnico',
+            'status' => 'active',
+        ]);
+
+        User::create([
+            'clinic_id' => $clinicA->id,
+            'name' => 'Coordenador de TI',
+            'email' => 'ti.coordenador@clinicavida.test',
+            'password' => 'password',
+            'role' => 'ti_coordenador',
             'status' => 'active',
         ]);
 
